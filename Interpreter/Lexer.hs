@@ -9,6 +9,7 @@ data Expr = BTrue
           | Sub Expr Expr
           | And Expr Expr 
           | Eq Expr Expr
+          | Diff Expr Expr
           | If Expr Expr Expr 
           | Var String 
           | Lam String Expr 
@@ -26,6 +27,7 @@ data Token = TokenTrue
            | TokenSub
            | TokenAnd 
            | TokenEq
+           | TokenDiff
            | TokenIf
            | TokenThen
            | TokenElse 
@@ -39,6 +41,7 @@ lexer [] = []
 lexer ('+':cs) = TokenAdd : lexer cs 
 lexer ('\\':cs) = TokenLam : lexer cs 
 lexer ('=':'=':cs) = TokenEq : lexer cs 
+lexer ('!':'=':cs) = TokenDiff : lexer cs 
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
 lexer ('-':cs) = TokenSub : lexer cs 
 lexer (c:cs) 

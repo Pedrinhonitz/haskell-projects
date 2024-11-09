@@ -16,12 +16,14 @@ import Lexer
   '-'           { TokenSub }
   and           { TokenAnd }
   "=="          { TokenEq }
+  "!="          { TokenDiff }
   if            { TokenIf }
   then          { TokenThen }
   else          { TokenElse }
 
 %nonassoc if then else 
 %left "=="
+%left "!="
 %left '+' and
 %left '-' and
 
@@ -34,6 +36,7 @@ Exp : true                        { BTrue }
     | Exp '-' Exp                 { Sub $1 $3 }
     | Exp and Exp                 { And $1 $3 }
     | Exp "==" Exp                { Eq $1 $3 }
+    | Exp "!=" Exp                { Diff $1 $3 }
     | if Exp then Exp else Exp    { If $2 $4 $6 }
 
 {
