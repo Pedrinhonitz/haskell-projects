@@ -8,6 +8,7 @@ data Expr = BTrue
           | Add Expr Expr 
           | Sub Expr Expr
           | Mult Expr Expr
+          | Div Expr Expr
           | And Expr Expr 
           | Or Expr Expr
           | Not Expr
@@ -15,6 +16,8 @@ data Expr = BTrue
           | Diff Expr Expr
           | Meno Expr Expr
           | Maio Expr Expr
+          | MenoIngual Expr Expr
+          | MaioIngual Expr Expr
           | If Expr Expr Expr 
           | Var String 
           | Lam String Expr 
@@ -31,6 +34,7 @@ data Token = TokenTrue
            | TokenAdd 
            | TokenSub
            | TokenMult
+           | TokenDiv
            | TokenAnd 
            | TokenOr
            | TokenNot
@@ -38,6 +42,8 @@ data Token = TokenTrue
            | TokenDiff
            | TokenMeno
            | TokenMaio
+           | TokenMenoIngual
+           | TokenMaioIngual
            | TokenIf
            | TokenThen
            | TokenElse 
@@ -49,13 +55,16 @@ data Token = TokenTrue
 lexer :: String -> [Token]
 lexer [] = [] 
 lexer ('+':cs) = TokenAdd : lexer cs 
+lexer ('*':'|':'*':cs) = TokenDiv : lexer cs
 lexer ('*':cs) = TokenMult : lexer cs
 lexer ('\\':cs) = TokenLam : lexer cs 
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('!':'=':cs) = TokenDiff : lexer cs
+lexer ('<':'=':cs) = TokenMenoIngual : lexer cs
 lexer ('<':cs) = TokenMeno : lexer cs
+lexer ('>':'=':cs) = TokenMaioIngual : lexer cs
 lexer ('>':cs) = TokenMaio : lexer cs
-lexer ('!':cs) = TokenNot : lexer cs 
+lexer ('!':cs) = TokenNot : lexer cs
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
 lexer ('-':cs) = TokenSub : lexer cs
 lexer ('?':'!':cs) = TokenThen : lexer cs 

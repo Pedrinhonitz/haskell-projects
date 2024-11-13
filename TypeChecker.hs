@@ -15,6 +15,9 @@ typeof (Sub e1 e2) = case (typeof e1, typeof e2) of
 typeof (Mult e1 e2) = case (typeof e1, typeof e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
+typeof (Div e1 e2) = case (typeof e1, typeof e2) of 
+                       (Just TNum, Just TNum) -> Just TNum
+                       _ -> Nothing 
 typeof (And e1 e2) = case (typeof e1, typeof e2) of 
                        (Just TBool, Just TBool) -> Just TBool
                        _ -> Nothing
@@ -32,7 +35,15 @@ typeof (Diff e1 e2) = case (typeof e1, typeof e2) of
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
+typeof (MenoIngual e1 e2) = case (typeof e1, typeof e2) of 
+                      (Just t1, Just t2) | t1 == t2 -> Just TBool 
+                                         | otherwise -> Nothing 
+                      _ -> Nothing
 typeof (Meno e1 e2) = case (typeof e1, typeof e2) of 
+                      (Just t1, Just t2) | t1 == t2 -> Just TBool 
+                                         | otherwise -> Nothing 
+                      _ -> Nothing
+typeof (MaioIngual e1 e2) = case (typeof e1, typeof e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing

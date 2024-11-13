@@ -29,6 +29,11 @@ step (Sub e1 e2) = Sub (step e1) e2
 step (Mult (Num n1) (Num n2)) = Num (n1 * n2)
 step (Mult (Num n) e) = (Mult (Num n) (step e)) 
 step (Mult e1 e2) = Mult (step e1) e2 
+
+step (Div (Num n1) (Num n2)) = Num (n1 `div` n2)
+step (Div (Num n) e) = (Div (Num n) (step e)) 
+step (Div e1 e2) = Div (step e1) e2 
+
 step (And BFalse e) = BFalse 
 step (And BTrue e) = e 
 step (And e1 e2) = And (step e1) e2 
@@ -51,10 +56,18 @@ step (Meno (Num n1) (Num n2)) = if n1 < n2 then BTrue
                                    else BFalse
 step (Meno e1 e2) | isValue e1 = Meno e1 (step e2)
                   | otherwise = Meno (step e1) e2
+step (MenoIngual (Num n1) (Num n2)) = if n1 <= n2 then BTrue 
+                                   else BFalse
+step (MenoIngual e1 e2) | isValue e1 = MenoIngual e1 (step e2)
+                  | otherwise = MenoIngual (step e1) e2
 step (Maio (Num n1) (Num n2)) = if n1 > n2 then BTrue 
                                    else BFalse
 step (Maio e1 e2) | isValue e1 = Maio e1 (step e2)
                   | otherwise = Maio (step e1) e2
+step (MaioIngual (Num n1) (Num n2)) = if n1 >= n2 then BTrue 
+                                   else BFalse
+step (MaioIngual e1 e2) | isValue e1 = MaioIngual e1 (step e2)
+                  | otherwise = MaioIngual (step e1) e2
 step (If BTrue e1 e2) = e1 
 step (If BFalse e1 e2) = e2 
 step (If e e1 e2) = If (step e) e1 e2 
