@@ -10,6 +10,7 @@ data Expr = BTrue
           | Mult Expr Expr
           | Div Expr Expr
           | DivRest Expr Expr
+          | Potencia Expr Expr
           | And Expr Expr 
           | Or Expr Expr
           | Not Expr
@@ -37,6 +38,7 @@ data Token = TokenTrue
            | TokenMult
            | TokenDiv
            | TokenDivRest
+           | TokenPotencia
            | TokenAnd 
            | TokenOr
            | TokenNot
@@ -57,6 +59,7 @@ data Token = TokenTrue
 lexer :: String -> [Token]
 lexer [] = [] 
 lexer ('+':cs) = TokenAdd : lexer cs 
+lexer ('^':cs) = TokenPotencia : lexer cs
 lexer ('*':'|':'*':cs) = TokenDiv : lexer cs
 lexer ('*':'%':'*':cs) = TokenDivRest : lexer cs
 lexer ('*':cs) = TokenMult : lexer cs

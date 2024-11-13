@@ -21,6 +21,9 @@ typeof (Div e1 e2) = case (typeof e1, typeof e2) of
 typeof (DivRest e1 e2) = case (typeof e1, typeof e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
+typeof (Potencia e1 e2) = case (typeof e1, typeof e2) of 
+                       (Just TNum, Just TNum) -> Just TNum
+                       _ -> Nothing 
 typeof (And e1 e2) = case (typeof e1, typeof e2) of 
                        (Just TBool, Just TBool) -> Just TBool
                        _ -> Nothing
