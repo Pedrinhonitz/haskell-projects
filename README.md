@@ -18,6 +18,7 @@
   <a href="#dart-about">About</a> &#xa0; | &#xa0; 
   <a href="#white_check_mark-how-to-use">How to use</a> &#xa0; | &#xa0;
   <a href="#rocket-stack">Stack</a> &#xa0; | &#xa0;
+  <a href="#books-documentation-of-the-language">Documentation of the language</a> &#xa0; | &#xa0;
   <a href="https://github.com/Pedrinhonitz" target="_blank">Autor</a>
 </p>
 
