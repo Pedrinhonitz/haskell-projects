@@ -1,0 +1,4 @@
+if ((Num 1) == (Num 3)) then 
+    (Num 2) + (Num 3) 
+else 
+    (Num 4) - (Num 2)

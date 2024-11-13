@@ -14,6 +14,7 @@ import Lexer
   num           { TokenNum $$ }
   '+'           { TokenAdd }
   '-'           { TokenSub }
+  '*'           { TokenMult }
   and           { TokenAnd }
   "=="          { TokenEq }
   "!="          { TokenDiff }
@@ -26,6 +27,7 @@ import Lexer
 %left "!="
 %left '+' and
 %left '-' and
+%left '*' and
 
 %% 
 
@@ -34,6 +36,7 @@ Exp : true                        { BTrue }
     | num                         { Num $1 }
     | Exp '+' Exp                 { Add $1 $3 }
     | Exp '-' Exp                 { Sub $1 $3 }
+    | Exp '*' Exp                 { Mult $1 $3}
     | Exp and Exp                 { And $1 $3 }
     | Exp "==" Exp                { Eq $1 $3 }
     | Exp "!=" Exp                { Diff $1 $3 }
