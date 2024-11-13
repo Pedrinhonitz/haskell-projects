@@ -15,6 +15,7 @@ import Lexer
   '+'           { TokenAdd }
   '-'           { TokenSub }
   "*|*"         { TokenDiv }
+  "*%*"         { TokenDivRest }
   '*'           { TokenMult }
   and           { TokenAnd }
   or            { TokenOr }
@@ -44,6 +45,7 @@ import Lexer
 %left '-' and
 %left '*' and
 %left '*|*' and
+%left '*%*' and
 
 %% 
 
@@ -54,6 +56,7 @@ Exp : true                        { BTrue }
     | Exp '-' Exp                 { Sub $1 $3 }
     | Exp '*' Exp                 { Mult $1 $3}
     | Exp "*|*" Exp               { Div $1 $3 }
+    | Exp "*%*" Exp               { DivRest $1 $3 }
     | Exp and Exp                 { And $1 $3 }
     | Exp or Exp                  { Or $1 $3}
     | '!' Exp                     { Not $2 }

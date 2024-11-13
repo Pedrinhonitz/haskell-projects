@@ -29,11 +29,12 @@ step (Sub e1 e2) = Sub (step e1) e2
 step (Mult (Num n1) (Num n2)) = Num (n1 * n2)
 step (Mult (Num n) e) = (Mult (Num n) (step e)) 
 step (Mult e1 e2) = Mult (step e1) e2 
-
 step (Div (Num n1) (Num n2)) = Num (n1 `div` n2)
 step (Div (Num n) e) = (Div (Num n) (step e)) 
 step (Div e1 e2) = Div (step e1) e2 
-
+step (DivRest (Num n1) (Num n2)) = Num (n1 `mod` n2)
+step (DivRest (Num n) e) = (DivRest (Num n) (step e)) 
+step (DivRest e1 e2) = DivRest (step e1) e2
 step (And BFalse e) = BFalse 
 step (And BTrue e) = e 
 step (And e1 e2) = And (step e1) e2 
