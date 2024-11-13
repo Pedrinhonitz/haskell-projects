@@ -16,6 +16,8 @@ import Lexer
   '-'           { TokenSub }
   '*'           { TokenMult }
   and           { TokenAnd }
+  or            { TokenOr }
+  '!'           { TokenNot }
   "=="          { TokenEq }
   "!="          { TokenDiff }
   if            { TokenIf }
@@ -25,6 +27,7 @@ import Lexer
 %nonassoc if then else 
 %left "=="
 %left "!="
+%left '!' and
 %left '+' and
 %left '-' and
 %left '*' and
@@ -38,6 +41,8 @@ Exp : true                        { BTrue }
     | Exp '-' Exp                 { Sub $1 $3 }
     | Exp '*' Exp                 { Mult $1 $3}
     | Exp and Exp                 { And $1 $3 }
+    | Exp or Exp                  { Or $1 $3}
+    | '!' Exp                     { Not $2 }
     | Exp "==" Exp                { Eq $1 $3 }
     | Exp "!=" Exp                { Diff $1 $3 }
     | if Exp then Exp else Exp    { If $2 $4 $6 }

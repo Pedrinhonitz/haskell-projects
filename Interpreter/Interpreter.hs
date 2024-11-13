@@ -32,6 +32,13 @@ step (Mult e1 e2) = Mult (step e1) e2
 step (And BFalse e) = BFalse 
 step (And BTrue e) = e 
 step (And e1 e2) = And (step e1) e2 
+step (Or BFalse BFalse) = BFalse
+step (Or BTrue _) = BTrue
+step (Or _ BTrue) = BTrue
+step (Or e1 e2) = Or (step e1) e2
+step (Not BTrue) = BFalse
+step (Not BFalse) = BTrue
+step (Not e) = Not (step e)
 step (Eq e1 e2) | isValue e1 && isValue e2 = if (e1 == e2) then BTrue 
                                              else BFalse
                 | isValue e1 = Eq e1 (step e2)
