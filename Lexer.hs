@@ -13,6 +13,8 @@ data Expr = BTrue
           | Not Expr
           | Eq Expr Expr
           | Diff Expr Expr
+          | Meno Expr Expr
+          | Maio Expr Expr
           | If Expr Expr Expr 
           | Var String 
           | Lam String Expr 
@@ -34,6 +36,8 @@ data Token = TokenTrue
            | TokenNot
            | TokenEq
            | TokenDiff
+           | TokenMeno
+           | TokenMaio
            | TokenIf
            | TokenThen
            | TokenElse 
@@ -49,9 +53,14 @@ lexer ('*':cs) = TokenMult : lexer cs
 lexer ('\\':cs) = TokenLam : lexer cs 
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('!':'=':cs) = TokenDiff : lexer cs
+lexer ('<':cs) = TokenMeno : lexer cs
+lexer ('>':cs) = TokenMaio : lexer cs
 lexer ('!':cs) = TokenNot : lexer cs 
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
-lexer ('-':cs) = TokenSub : lexer cs 
+lexer ('-':cs) = TokenSub : lexer cs
+lexer ('?':'!':cs) = TokenThen : lexer cs 
+lexer ('?':cs) = TokenIf : lexer cs
+lexer ('|':cs) = TokenElse : lexer cs
 lexer (c:cs) 
    | isSpace c = lexer cs 
    | isAlpha c = lexerKW (c:cs) 
@@ -67,7 +76,7 @@ lexerKW cs = case span isAlpha cs of
                ("false", rest) -> TokenFalse : lexer rest 
                ("and", rest) -> TokenAnd : lexer rest 
                ("or", rest) -> TokenOr : lexer rest
-               ("if", rest) -> TokenIf : lexer rest 
-               ("then", rest) -> TokenThen : lexer rest 
-               ("else", rest) -> TokenElse : lexer rest 
+        --        ("if", rest) -> TokenIf : lexer rest 
+        --        ("then", rest) -> TokenThen : lexer rest 
+        --        ("else", rest) -> TokenElse : lexer rest 
                (var, rest) -> TokenVar var : lexer rest

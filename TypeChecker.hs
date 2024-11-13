@@ -32,6 +32,14 @@ typeof (Diff e1 e2) = case (typeof e1, typeof e2) of
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
+typeof (Meno e1 e2) = case (typeof e1, typeof e2) of 
+                      (Just t1, Just t2) | t1 == t2 -> Just TBool 
+                                         | otherwise -> Nothing 
+                      _ -> Nothing
+typeof (Maio e1 e2) = case (typeof e1, typeof e2) of 
+                      (Just t1, Just t2) | t1 == t2 -> Just TBool 
+                                         | otherwise -> Nothing 
+                      _ -> Nothing
 typeof (If e e1 e2) = case typeof e of 
                         Just TBool -> case (typeof e1, typeof e2) of 
                                         (Just t1, Just t2) | t1 == t2 -> Just t1 

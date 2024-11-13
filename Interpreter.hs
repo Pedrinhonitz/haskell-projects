@@ -47,6 +47,14 @@ step (Diff e1 e2) | isValue e1 && isValue e2 = if (e1 == e2) then BFalse
                                              else BTrue
                 | isValue e1 = Diff e1 (step e2)
                 | otherwise = Diff (step e1) e2
+step (Meno (Num n1) (Num n2)) = if n1 < n2 then BTrue 
+                                   else BFalse
+step (Meno e1 e2) | isValue e1 = Meno e1 (step e2)
+                  | otherwise = Meno (step e1) e2
+step (Maio (Num n1) (Num n2)) = if n1 > n2 then BTrue 
+                                   else BFalse
+step (Maio e1 e2) | isValue e1 = Maio e1 (step e2)
+                  | otherwise = Maio (step e1) e2
 step (If BTrue e1 e2) = e1 
 step (If BFalse e1 e2) = e2 
 step (If e e1 e2) = If (step e) e1 e2 
