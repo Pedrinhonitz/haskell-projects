@@ -22,12 +22,16 @@ data Expr = BTrue
           | MaioIngual Expr Expr
           | If Expr Expr Expr 
           | Var String 
-          | Lam String Expr 
+          | Lam String Ty Expr 
           | App Expr Expr
+          | Create String Expr Expr
+          | List [Expr]
           deriving (Show, Eq)
 
 data Ty = TBool 
         | TNum 
+        | TFun Ty Ty 
+        | TList Ty
         deriving (Show, Eq)
 
 data Token = TokenTrue
@@ -54,6 +58,17 @@ data Token = TokenTrue
            | TokenVar String
            | TokenLam 
            | TokenArrow 
+           | TokenBoolean 
+           | TokenNumber
+           | TokenPonto
+           | TokenOpenParenteses
+           | TokenCloseParenteses
+           | TokenCreate 
+           | TokenReceba
+           | TokenIn
+           | TokenColcheteOpen
+           | TokenColcheteClose
+           | TokenSep
            deriving Show
 
 lexer :: String -> [Token]
@@ -63,7 +78,7 @@ lexer ('^':cs) = TokenPotencia : lexer cs
 lexer ('*':'|':'*':cs) = TokenDiv : lexer cs
 lexer ('*':'%':'*':cs) = TokenDivRest : lexer cs
 lexer ('*':cs) = TokenMult : lexer cs
-lexer ('\\':cs) = TokenLam : lexer cs 
+lexer ('-':'\\':cs) = TokenLam : lexer cs 
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('!':'=':cs) = TokenDiff : lexer cs
 lexer ('<':'=':cs) = TokenMenoIngual : lexer cs
@@ -76,6 +91,13 @@ lexer ('-':cs) = TokenSub : lexer cs
 lexer ('?':'!':cs) = TokenThen : lexer cs 
 lexer ('?':cs) = TokenIf : lexer cs
 lexer ('|':cs) = TokenElse : lexer cs
+lexer (':':cs) = TokenPonto : lexer cs 
+lexer ('(':cs) = TokenOpenParenteses : lexer cs
+lexer (')':cs) = TokenCloseParenteses : lexer cs
+lexer ('=':cs) = TokenReceba : lexer cs
+lexer ('[':cs) = TokenColcheteOpen : lexer cs
+lexer (']':cs) = TokenColcheteClose : lexer cs
+lexer (',':cs) = TokenSep : lexer cs
 lexer (c:cs) 
    | isSpace c = lexer cs 
    | isAlpha c = lexerKW (c:cs) 
@@ -91,7 +113,20 @@ lexerKW cs = case span isAlpha cs of
                ("false", rest) -> TokenFalse : lexer rest 
                ("and", rest) -> TokenAnd : lexer rest 
                ("or", rest) -> TokenOr : lexer rest
-        --        ("if", rest) -> TokenIf : lexer rest 
-        --        ("then", rest) -> TokenThen : lexer rest 
-        --        ("else", rest) -> TokenElse : lexer rest 
+               ("create", rest) -> TokenCreate : lexer rest 
+               ("Num", rest) -> TokenNumber : lexer rest        
+               ("Bool", rest) -> TokenBoolean : lexer rest 
+               ("in", rest) -> TokenIn : lexer rest
                (var, rest) -> TokenVar var : lexer rest
+
+
+theFirst :: Expr -> Maybe Expr
+theFirst (List []) = Nothing 
+theFirst (List (x:_)) = Just x
+theFirst _ = Nothing
+
+theLast :: Expr -> Maybe Expr
+theLast (List []) = Nothing
+theLast (List [x]) = Just x 
+theLast (List (_:xs)) = theLast (List xs)
+theLast _ = Nothing

@@ -1,12 +1,12 @@
 {
-module Parser where 
+module Parser where
 
-import Lexer
+import Lexer 
 }
 
 %name parser 
 %tokentype { Token }
-%error { parseError } 
+%error { parseError }
 
 %token 
   true          { TokenTrue }
@@ -30,6 +30,20 @@ import Lexer
   '?'           { TokenIf }
   "?!"          { TokenThen }
   '|'           { TokenElse }
+  "->"          { TokenArrow }
+  "-\\"         { TokenLam }
+  var           { TokenVar $$ }
+  Bool          { TokenBoolean } 
+  Num           { TokenNumber }
+  create        { TokenCreate }
+  ':'           { TokenPonto }
+  '('           { TokenOpenParenteses }
+  ')'           { TokenCloseParenteses }
+  '='           { TokenReceba }
+  "in"          { TokenIn }
+  '['           { TokenColcheteOpen }
+  ']'           { TokenColcheteClose }
+  ','           { TokenSep }
   -- if            { TokenIf }
   -- then          { TokenThen }
   -- else          { TokenElse }
@@ -69,8 +83,22 @@ Exp : true                        { BTrue }
     | Exp '<' Exp                 { Meno $1 $3 }
     | Exp ">=" Exp                { MaioIngual $1 $3 }
     | Exp '>' Exp                 { Maio $1 $3 }
-    | '?' Exp "?!" Exp '|' Exp    {If $2 $4 $6 }
+    | '?' Exp "?!" Exp '|' Exp    { If $2 $4 $6 }
+    | var                         { Var $1 }
+    | "-\\" var ':' Ty "->" Exp   { Lam $2 $4 $6 }
+    | Exp Exp                     { App $1 $2 }
+    | '(' Exp ')'                 { $2 }
+    | create var '=' Exp "in" Exp { Create $2 $4 $6 }
+    | '[' ExpList ']'             { List $2 }
     -- | if Exp then Exp else Exp    { If $2 $4 $6 }
+
+Ty  : Bool                              { TBool }
+    | Num                               { TNum }
+    | Ty "->" Ty                        { TFun $1 $3 }
+
+ExpList :
+    Exp                           { [ $1 ] }
+    | ExpList ',' Exp             { $1 ++ [ $3 ] }
 
 {
 parseError :: [Token] -> a 

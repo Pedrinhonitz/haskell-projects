@@ -2,69 +2,90 @@ module TypeChecker where
 
 import Lexer 
 
-typeof :: Expr -> Maybe Ty 
-typeof (Num _) = Just TNum 
-typeof BTrue = Just TBool
-typeof BFalse = Just TBool
-typeof (Add e1 e2) = case (typeof e1, typeof e2) of 
+type Ctx = [(String, Ty)]
+
+typeof :: Ctx -> Expr -> Maybe Ty 
+typeof _ (Num _) = Just TNum 
+typeof _ BTrue = Just TBool
+typeof _ BFalse = Just TBool
+typeof ctx (Add e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (Sub e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Sub e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (Mult e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Mult e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (Div e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Div e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (DivRest e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (DivRest e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (Potencia e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Potencia e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TNum, Just TNum) -> Just TNum
                        _ -> Nothing 
-typeof (And e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (And e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TBool, Just TBool) -> Just TBool
                        _ -> Nothing
-typeof (Or e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Or e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                        (Just TBool, Just TBool) -> Just TBool
                        _ -> Nothing          
-typeof (Not e) = case typeof e of
+typeof ctx (Not e) = case typeof ctx e of
                    Just TBool -> Just TBool
                    _ -> Nothing
-typeof (Eq e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Eq e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (Diff e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Diff e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (MenoIngual e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (MenoIngual e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (Meno e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Meno e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (MaioIngual e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (MaioIngual e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (Maio e1 e2) = case (typeof e1, typeof e2) of 
+typeof ctx (Maio e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                       (Just t1, Just t2) | t1 == t2 -> Just TBool 
                                          | otherwise -> Nothing 
                       _ -> Nothing
-typeof (If e e1 e2) = case typeof e of 
-                        Just TBool -> case (typeof e1, typeof e2) of 
+typeof ctx (If e e1 e2) = case typeof ctx e of 
+                        Just TBool -> case (typeof ctx e1, typeof ctx e2) of 
                                         (Just t1, Just t2) | t1 == t2 -> Just t1 
                                                            | otherwise -> Nothing
                                         _ -> Nothing
                         _ -> Nothing
+typeof ctx (Var v) = lookup v ctx 
+typeof ctx (Lam v t1 b) = let Just t2 = typeof ((v, t1) : ctx) b 
+                            in Just (TFun t1 t2)
+typeof ctx (App e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
+                           (Just (TFun t11 t12), Just t2) | t11 == t2 -> Just t12 
+                                                          | otherwise -> Nothing 
+                           _ -> Nothing
+typeof ctx (Create v e1 e2) = case typeof ctx e1 of 
+                             Just t1 -> typeof ((v, t1):ctx) e2 
+                             _       -> Nothing 
+typeof ctx (List cs) = case cs of
+    [] -> Just (TList TNum) 
+    (x : xs) -> let tx = typeof ctx x
+                in case tx of
+                     Just t -> 
+                         if all (\ e -> typeof ctx e == Just t) xs
+                         then Just (TList t)
+                         else error "Lista com tipos inconsistentes"
+                     Nothing -> error "Erro no tipo do elemento"
 
 typecheck :: Expr -> Expr 
-typecheck e = case typeof e of 
+typecheck e = case typeof [] e of 
                 (Just _) -> e 
                 _        -> error ("Erro verificando tipo da expressão: " ++ show e)
