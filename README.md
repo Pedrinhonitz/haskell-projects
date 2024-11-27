@@ -143,9 +143,20 @@ $ Num != Num # example 3 != 2
 Example of a lambda:
 ```bash
 # KLN Language
-$ \ Var -> exp e # example \ x -> x + 1 6
+$ (-\\ Var : Type -> exp) e # example (-\\ x :Num -> x + 1) 6
 ```
 
+Example of a create (Let to Haskell):
+```bash
+# KLN Language
+$ Create Var = Num in exp # example create x = 5 in x + 2
+```
+
+Example of a List:
+```bash
+# KLN Language
+$ [exp] # example [1, 2, 3] o [2 + 2, 3 + 5] or [true, false, true]
+```
 #
 Made by <a href="https://github.com/Pedrinhonitz" target="_blank">Pedrinhonitz</a> in the Programming Languages classes - UFFS
 
