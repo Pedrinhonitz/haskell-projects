@@ -143,7 +143,7 @@ $ Num != Num # example 3 != 2
 Example of a lambda:
 ```bash
 # KLN Language
-$ (-\\ Var : Type -> exp) e # example (-\\ x :Num -> x + 1) 6
+$ (-\ Var : Type -> exp) e # example (-\ x :Num -> x + 1) 6
 ```
 
 Example of a create (Let to Haskell):
