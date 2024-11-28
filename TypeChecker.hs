@@ -79,11 +79,15 @@ typeof ctx (List cs) = case cs of
     [] -> Just (TList TNum) 
     (x : xs) -> let tx = typeof ctx x
                 in case tx of
-                     Just t -> 
-                         if all (\ e -> typeof ctx e == Just t) xs
-                         then Just (TList t)
-                         else error "Lista com tipos inconsistentes"
-                     Nothing -> error "Erro no tipo do elemento"
+                     Just t -> if all (\ e -> typeof ctx e == Just t) xs then Just (TList t)
+                                else Nothing
+                     _ -> Nothing
+typeof ctx (TheFirst e) = case typeof ctx e of
+    Just (TList t) -> Just t
+    _ -> Nothing
+typeof ctx (TheLast e) = case typeof ctx e of
+    Just (TList t) -> Just t
+    _ -> Nothing
 
 typecheck :: Expr -> Expr 
 typecheck e = case typeof [] e of 

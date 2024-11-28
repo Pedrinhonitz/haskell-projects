@@ -26,6 +26,8 @@ data Expr = BTrue
           | App Expr Expr
           | Create String Expr Expr
           | List [Expr]
+          | TheFirst Expr
+          | TheLast Expr
           deriving (Show, Eq)
 
 data Ty = TBool 
@@ -69,6 +71,8 @@ data Token = TokenTrue
            | TokenColcheteOpen
            | TokenColcheteClose
            | TokenSep
+           | TokenTheFirst
+           | TokenTheLast
            deriving Show
 
 lexer :: String -> [Token]
@@ -117,16 +121,6 @@ lexerKW cs = case span isAlpha cs of
                ("Num", rest) -> TokenNumber : lexer rest        
                ("Bool", rest) -> TokenBoolean : lexer rest 
                ("in", rest) -> TokenIn : lexer rest
+               ("theFirst", rest) -> TokenTheFirst : lexer rest
+               ("theLast", rest) -> TokenTheLast : lexer rest
                (var, rest) -> TokenVar var : lexer rest
-
-
-theFirst :: Expr -> Maybe Expr
-theFirst (List []) = Nothing 
-theFirst (List (x:_)) = Just x
-theFirst _ = Nothing
-
-theLast :: Expr -> Maybe Expr
-theLast (List []) = Nothing
-theLast (List [x]) = Just x 
-theLast (List (_:xs)) = theLast (List xs)
-theLast _ = Nothing

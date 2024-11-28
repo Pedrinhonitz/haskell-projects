@@ -10,6 +10,17 @@ isValue (Lam _ _ _) = True
 isValue (List xs) = all isValue xs
 isValue _ = False 
 
+theFirst :: Expr -> Maybe Expr
+theFirst (List []) = Nothing 
+theFirst (List (x:_)) = Just x
+theFirst _ = Nothing
+
+theLast :: Expr -> Maybe Expr
+theLast (List []) = Nothing
+theLast (List [x]) = Just x 
+theLast (List (_:xs)) = theLast (List xs)
+theLast _ = Nothing
+
 subst :: String -> Expr -> Expr -> Expr
 subst x n b@(Var v) = if v == x then 
                         n 
@@ -90,6 +101,18 @@ step (List []) = List []
 step (List (c:cs)) = case step c of
     c' | c' == c    -> List (c':cs)
        | otherwise  -> List (c':(map step cs))
+step (TheFirst (List xs)) = 
+  case theFirst (List xs) of
+    Just x -> x  
+    Nothing -> step (List xs)
+step (TheFirst e) = TheFirst (step e)
+step (TheLast (List xs)) = 
+  case theLast (List xs) of
+    Just x -> x  
+    Nothing -> step (List xs)
+step (TheLast e) = TheLast (step e)
+
+
 
 eval :: Expr -> Expr 
 eval e | isValue e = e 

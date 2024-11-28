@@ -44,6 +44,8 @@ import Lexer
   '['           { TokenColcheteOpen }
   ']'           { TokenColcheteClose }
   ','           { TokenSep }
+  theFirst      { TokenTheFirst }
+  theLast       { TokenTheLast }
   -- if            { TokenIf }
   -- then          { TokenThen }
   -- else          { TokenElse }
@@ -90,6 +92,8 @@ Exp : true                        { BTrue }
     | '(' Exp ')'                 { $2 }
     | create var '=' Exp "in" Exp { Create $2 $4 $6 }
     | '[' ExpList ']'             { List $2 }
+    | theFirst Exp                { TheFirst $2 }
+    | theLast Exp                { TheLast $2 }
     -- | if Exp then Exp else Exp    { If $2 $4 $6 }
 
 Ty  : Bool                              { TBool }
